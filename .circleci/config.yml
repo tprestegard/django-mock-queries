@@ -1,5 +1,10 @@
 version: 2
 
+general:
+  branches:
+    only:
+      - feature/circleci
+
 defaults: &defaults
   working_directory: ~/repo
 
