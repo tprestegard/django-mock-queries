@@ -41,6 +41,7 @@ jobs:
       - checkout
       - run: sudo chown -R circleci:circleci /usr/local/bin
       - run: sudo chown -R circleci:circleci /usr/local/lib/python3.3/site-packages
+      - run: alias python=python3
       - run: *tests
       # - run: *coverage
 
