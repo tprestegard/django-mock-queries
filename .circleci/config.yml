@@ -6,7 +6,7 @@ general:
       - feature/circleci
 
 defaults: &defaults
-  working_directory: ~/repo
+  working_directory: ~/dmq
 
 aliases:
   - &tests
