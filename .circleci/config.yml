@@ -1,0 +1,62 @@
+version: 2
+
+defaults: &defaults
+  working_directory: ~/repo
+
+aliases:
+  - &tests
+    |
+      pip install tox>=1.9 && tox -e $TOX_ENV
+
+  - &coverage
+    |
+      pip install coverage<4 && coverage report -m
+
+jobs:
+  "py27-dj18-drf33":
+    <<: *defaults
+    docker:
+      - image: circleci/python:2.7
+        environment:
+          TOX_ENV=py27-dj18-drf33
+    steps:
+      - checkout
+      - run: *tests
+      # - run: *coverage
+
+  "py34-dj18-drf33":
+    <<: *defaults
+    docker:
+      - image: circleci/python:3.3
+        environment:
+          TOX_ENV=py34-dj18-drf33
+    steps:
+      - checkout
+      - run: *tests
+      # - run: *coverage
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - "py27-dj18-drf33"
+      # - "py27-dj19-drf33"
+      # - "py27-dj110-drf33"
+      # - "py27-dj111-drf37"
+
+      # - "py33-dj18-drf33"
+
+      - "py34-dj18-drf33"
+      # - "py34-dj19-drf33"
+      # - "py34-dj110-drf33"
+      # - "py34-dj111-drf37"
+      # - "py34-dj20-drf37"
+
+      # - "py35-dj18-drf33"
+      # - "py35-dj19-drf33"
+      # - "py35-dj110-drf33"
+      # - "py35-dj111-drf37"
+      # - "py35-dj20-drf37"
+
+      # - "py36-dj111-drf37"
+      # - "py36-dj20-drf37"
