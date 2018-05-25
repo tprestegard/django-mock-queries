@@ -1,5 +1,10 @@
 version: 2
 
+dependencies:
+  override:
+    - pip install tox tox-pyenv coverage<4
+    - pyenv local 2.7.14 3.3.6 3.4.6 3.5.3 3.6.1
+
 general:
   branches:
     only:
@@ -11,11 +16,11 @@ defaults: &defaults
 aliases:
   - &tests
     |
-      pip install tox>=1.9 && tox -e $TOX_ENV
+      tox -e $TOX_ENV
 
   - &coverage
     |
-      pip install coverage<4 && coverage report -m
+      coverage report -m
 
 jobs:
   "py27-dj18-drf33":
@@ -26,8 +31,8 @@ jobs:
           TOX_ENV=py27-dj18-drf33
     steps:
       - checkout
-      - run: sudo chown -R circleci:circleci /usr/local/bin
-      - run: sudo chown -R circleci:circleci /usr/local/lib/python2.7/site-packages
+      # - run: sudo chown -R circleci:circleci /usr/local/bin
+      # - run: sudo chown -R circleci:circleci /usr/local/lib/python2.7/site-packages
       - run: *tests
       # - run: *coverage
 
@@ -41,7 +46,6 @@ jobs:
       - checkout
       - run: sudo chown -R circleci:circleci /usr/local/bin
       - run: sudo chown -R circleci:circleci /usr/local/lib/python3.3/site-packages
-      - run: alias python=python3
       - run: *tests
       # - run: *coverage
 
