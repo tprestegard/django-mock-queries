@@ -26,6 +26,8 @@ jobs:
           TOX_ENV=py27-dj18-drf33
     steps:
       - checkout
+      - run: sudo chown -R circleci:circleci /usr/local/bin
+      - run: sudo chown -R circleci:circleci /usr/local/lib/python2.7/site-packages
       - run: *tests
       # - run: *coverage
 
@@ -37,6 +39,8 @@ jobs:
           TOX_ENV=py34-dj18-drf33
     steps:
       - checkout
+      - run: sudo chown -R circleci:circleci /usr/local/bin
+      - run: sudo chown -R circleci:circleci /usr/local/lib/python3.3/site-packages
       - run: *tests
       # - run: *coverage
 
