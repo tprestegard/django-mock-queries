@@ -196,6 +196,30 @@ class TestQuery(TestCase):
                 r"Choices are 'id', 'make', 'make_id', 'model', 'passengers', 'sedan', 'speed', 'variations'\."):
             self.mock_set.filter(bad_field='bogus')
 
+    def test_query_filter_with_empty_q(self):
+        item_1 = MockModel(mock_name='#1', foo=1, bar='a')
+        item_2 = MockModel(mock_name='#2', foo=1, bar='b')
+        item_3 = MockModel(mock_name='#3', foo=3, bar='b')
+
+        self.mock_set.add(item_1, item_2, item_3)
+        results = list(self.mock_set.filter(Q()))
+
+        assert item_1 in results
+        assert item_2 in results
+        assert item_3 in results
+
+    def test_query_filter_with_empty_negated_q(self):
+        item_1 = MockModel(mock_name='#1', foo=1, bar='a')
+        item_2 = MockModel(mock_name='#2', foo=1, bar='b')
+        item_3 = MockModel(mock_name='#3', foo=3, bar='b')
+
+        self.mock_set.add(item_1, item_2, item_3)
+        results = list(self.mock_set.filter(~Q()))
+
+        assert item_1 in results
+        assert item_2 in results
+        assert item_3 in results
+
     def test_query_exclude(self):
         item_1 = MockModel(foo=1, bar='a')
         item_2 = MockModel(foo=1, bar='b')
@@ -207,6 +231,30 @@ class TestQuery(TestCase):
         assert item_1 in results, results
         assert item_2 not in results, results
         assert item_3 in results, results
+
+    def test_query_exclude_with_empty_q(self):
+        item_1 = MockModel(mock_name='#1', foo=1, bar='a')
+        item_2 = MockModel(mock_name='#2', foo=1, bar='b')
+        item_3 = MockModel(mock_name='#3', foo=3, bar='b')
+
+        self.mock_set.add(item_1, item_2, item_3)
+        results = list(self.mock_set.exclude(Q()))
+
+        assert item_1 in results
+        assert item_2 in results
+        assert item_3 in results
+
+    def test_query_exclude_with_negated_empty_q(self):
+        item_1 = MockModel(mock_name='#1', foo=1, bar='a')
+        item_2 = MockModel(mock_name='#2', foo=1, bar='b')
+        item_3 = MockModel(mock_name='#3', foo=3, bar='b')
+
+        self.mock_set.add(item_1, item_2, item_3)
+        results = list(self.mock_set.exclude(~Q()))
+
+        assert item_1 in results
+        assert item_2 in results
+        assert item_3 in results
 
     def test_query_clears_all_items_from_set(self):
         self.mock_set.add(1, 2, 3)

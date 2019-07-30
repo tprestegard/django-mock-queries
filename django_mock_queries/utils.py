@@ -207,9 +207,7 @@ def is_disqualified(obj, attrs, negated):
 
 def matches(*source, **attrs):
     negated = attrs.pop('negated', False)
-    disqualified = [x for x in source if is_disqualified(x, attrs, negated)]
-
-    return [x for x in source if x not in disqualified]
+    return [x for x in source if not is_disqualified(x, attrs, negated)]
 
 
 def validate_mock_set(mock_set, for_update=False, **fields):

@@ -82,13 +82,16 @@ class MockSet(MagicMock):
     def _filter_single_q(self, source, q_obj, negated):
         if isinstance(q_obj, DjangoQ):
             return self._filter_q(source, q_obj)
+        elif q_obj is None:
+            return matches(negated=negated, *source)
         else:
             return matches(negated=negated, *source, **{q_obj[0]: q_obj[1]})
 
     def _filter_q(self, source, query):
         results = []
 
-        for child in query.children:
+        query_subset = query.children or [None]
+        for child in query_subset:
             filtered = self._filter_single_q(source, child, query.negated)
 
             if filtered:
@@ -102,18 +105,26 @@ class MockSet(MagicMock):
         return results
 
     def filter(self, *args, **attrs):
+        return self._filter_or_exclude(False, *args, **attrs)
+
+    def exclude(self, *args, **attrs):
+        return self._filter_or_exclude(True, *args, **attrs)
+
+    def _filter_or_exclude(self, negated, *args, **attrs):
         results = list(self.items)
-        for x in args:
+
+        # Create a Q objects from attrs
+        Q_attrs = DjangoQ(**attrs)
+
+        for x in args + (Q_attrs,):
             if isinstance(x, DjangoQ):
+                if negated:
+                    x = ~x
                 results = self._filter_q(results, x)
             else:
                 raise ArgumentNotSupported()
-        return MockSet(*matches(*results, **attrs), clone=self)
 
-    def exclude(self, *args, **attrs):
-        excluded = self.filter(*args, **attrs)
-        results = [item for item in self.items if item not in excluded]
-        return MockSet(*results, clone=self)
+        return MockSet(*matches(*results, negated=negated), clone=self)
 
     def exists(self):
         return len(self.items) > 0
